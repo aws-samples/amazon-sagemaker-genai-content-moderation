@@ -1,11 +1,18 @@
-# Explore use cases with MultiModalility Model on SageMaker.
+# Build a generative AI based content moderation solution on Amazon SageMaker
 
-[Visual Dialog(VisDial)](https://visualdialog.org/) requires an AI agent to hold a meaningful dialog with humans in natural, conversational language about visual content. Specifically, given an image, a dialog history, and a follow-up question about the image, the task is to answer the question.
+We use [BLIP2](https://arxiv.org/abs/2301.12597) as the multimodal pre-training method. BLIP2 is one of the SOTA models in multimodal pre-training method, and outperforms most of the existing methods in Visual Question Answering, Image Captioning and Image-Text Retrieval. For LLM, we will use [Llama 2](https://ai.meta.com/llama/), the next generation open source large language model, which outperforms the existing open source language models on many benchmarks including reasoning, coding, proficiency, and knowledge tests.
+<div align="center">
+    <img width=600 src="images/architecture.png" /><figcaption>Solution Architecture</figcaption>
+</div>
 
-[Vision-languagepre-training(VLP)](https://arxiv.org/pdf/2210.09263.pdf) 
-
-[BLIP2](https://arxiv.org/pdf/2201.12086.pdf) is a unified VLP framework
-
-## Content Moderation
+## Dataset
 We use dataset from [Content Moderation with AWS AI Services](https://github.com/aws-samples/amazon-rekognition-code-samples/tree/main/content-moderation) to test how BLIP2 can detect unsafe content in the image and meanwhile give the explanation with effective prompts.
+
+## Security
+
+See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
+
+## License
+
+This library is licensed under the MIT-0 License. See the LICENSE file.
 

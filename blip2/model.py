@@ -55,6 +55,7 @@ class Blip2():
         if self.config.caption_model is None and self.config.caption_model_name:
 
             model_path = CAPTION_MODELS[self.config.caption_model_name]
+            print(f'model_path: {model_path}')
             if self.config.caption_model_name.startswith('blip2-'):
                 caption_model = Blip2ForConditionalGeneration.from_pretrained(model_path, torch_dtype=self.dtype, device_map="auto", cache_dir="/tmp", )
             else:
@@ -75,9 +76,11 @@ class Blip2():
         inputs = self.caption_processor(images=pil_image, text=prompt, return_tensors="pt").to(self.device)
         if not self.config.caption_model_name.startswith('git-'):
             inputs = inputs.to(self.dtype)
-        tokens = self.caption_model.generate(**inputs, max_new_tokens=self.config.caption_max_length)
+        
+        with torch.no_grad():
+            tokens = self.caption_model.generate(**inputs, max_new_tokens=self.config.caption_max_length)
+        
         return self.caption_processor.batch_decode(tokens, skip_special_tokens=True)[0].strip()
-
 
     def _prepare_caption(self):
         if self.caption_offloaded:
@@ -87,9 +90,8 @@ class Blip2():
 
 with open('./model_name.json', 'rb') as openfile:
     json_object = json.load(openfile)
-    
-caption_model_name = json_object.pop('caption_model_name')
-config = Config()
+
+config = Config(caption_model_name=json_object.pop('caption_model_name'))
 _service = Blip2(config)
 
 def handle(inputs: Input) -> Optional[Output]:
@@ -102,8 +104,7 @@ def handle(inputs: Input) -> Optional[Output]:
     
     f = BytesIO(base64.b64decode(base64_image_string))
     input_image = Image.open(f).convert("RGB")
-
-
+    
     if 'prompt' in data:
         prompt = data.pop("prompt")
     else:
