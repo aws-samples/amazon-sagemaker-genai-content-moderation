@@ -1,17 +1,11 @@
-## My Project
+# Explore use cases with MultiModalility Model on SageMaker.
 
-TODO: Fill this README out!
+[Visual Dialog(VisDial)](https://visualdialog.org/) requires an AI agent to hold a meaningful dialog with humans in natural, conversational language about visual content. Specifically, given an image, a dialog history, and a follow-up question about the image, the task is to answer the question.
 
-Be sure to:
+[Vision-languagepre-training(VLP)](https://arxiv.org/pdf/2210.09263.pdf) 
 
-* Change the title in this README
-* Edit your repository description on GitHub
+[BLIP2](https://arxiv.org/pdf/2201.12086.pdf) is a unified VLP framework
 
-## Security
-
-See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
-
-## License
-
-This library is licensed under the MIT-0 License. See the LICENSE file.
+## Content Moderation
+We use dataset from [Content Moderation with AWS AI Services](https://github.com/aws-samples/amazon-rekognition-code-samples/tree/main/content-moderation) to test how BLIP2 can detect unsafe content in the image and meanwhile give the explanation with effective prompts.
 
