@@ -5,6 +5,13 @@ We use [BLIP2](https://arxiv.org/abs/2301.12597) as the multimodal pre-training 
     <img width=600 src="images/architecture.png" /><figcaption>Solution Architecture</figcaption>
 </div>
 
+
+
+<div align="center">
+    <img width=600 src="images/illustrationCM.png" /><figcaption>Illustration</figcaption>
+</div>
+
+
 ## Example
 
 We use several images to showcase BLIP2's performance in various tests, including image captioning, visual question answering, and image-text retrieval. Additionally, we evaluate BLIP2's ability to identify unsafe content in images and provide explanations using effective prompts.
