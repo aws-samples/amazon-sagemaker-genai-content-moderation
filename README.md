@@ -5,12 +5,16 @@ We use [BLIP2](https://arxiv.org/abs/2301.12597) as the multimodal pre-training 
     <img width=600 src="images/architecture.png" /><figcaption>Solution Architecture</figcaption>
 </div>
 
-## Dataset
-We use dataset from [Content Moderation with AWS AI Services](https://github.com/aws-samples/amazon-rekognition-code-samples/tree/main/content-moderation) to test how BLIP2 can detect unsafe content in the image and meanwhile give the explanation with effective prompts.
+## Example
+
+We use several images to showcase BLIP2's performance in various tests, including image captioning, visual question answering, and image-text retrieval. Additionally, we evaluate BLIP2's ability to identify unsafe content in images and provide explanations using effective prompts.
+
 
 <div align="center">
     <img width=600 src="images/usecaseBLIP.png" /><figcaption>Use Cases</figcaption>
 </div>
+
+
 
 ## Security
 
@@ -20,3 +24,4 @@ See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more inform
 
 This library is licensed under the MIT-0 License. See the LICENSE file.
 
+    
