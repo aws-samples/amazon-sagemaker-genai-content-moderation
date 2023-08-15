@@ -25,9 +25,6 @@ CAPTION_MODELS = {
 }
 
 
-CACHE_URL_BASE = 'https://huggingface.co/pharma/ci-preprocess/resolve/main/'
-
-
 @dataclass 
 class Config:
     # models can optionally be passed in directly
@@ -44,18 +41,27 @@ class Config:
 
    
 class Blip2():
-    def __init__(self, config: Config):
+    def __init__(self, config: Config, properties):
         self.config = config
         self.device = config.device
         self.dtype = torch.float16 if self.device == 'cuda' else torch.float32
-        self.load_caption_model()
+        self.load_caption_model(properties)
         self.caption_offloaded = True
 
-    def load_caption_model(self):
+    def load_caption_model(self, properties):
         if self.config.caption_model is None and self.config.caption_model_name:
-
             model_path = CAPTION_MODELS[self.config.caption_model_name]
-            print(f'model_path: {model_path}')
+            if "model_id" in properties:
+                model_path = properties["model_id"]
+                if any(os.listdir(model_path)):
+                    files_in_folder = os.listdir(model_path)
+                    print('model path files:')
+                    for file in files_in_folder:
+                        print(file)
+                else:
+                    raise ValueError('Please make sure the model artifacts are uploaded to s3')
+
+            print(f'model path: {model_path}')
             if self.config.caption_model_name.startswith('blip2-'):
                 caption_model = Blip2ForConditionalGeneration.from_pretrained(model_path, torch_dtype=self.dtype, device_map="auto", cache_dir="/tmp", )
             else:
@@ -76,7 +82,7 @@ class Blip2():
         inputs = self.caption_processor(images=pil_image, text=prompt, return_tensors="pt").to(self.device)
         if not self.config.caption_model_name.startswith('git-'):
             inputs = inputs.to(self.dtype)
-        
+
         with torch.no_grad():
             tokens = self.caption_model.generate(**inputs, max_new_tokens=self.config.caption_max_length)
         
@@ -91,11 +97,19 @@ class Blip2():
 with open('./model_name.json', 'rb') as openfile:
     json_object = json.load(openfile)
 
-config = Config(caption_model_name=json_object.pop('caption_model_name'))
-_service = Blip2(config)
+# config = Config(caption_model_name=json_object.pop('caption_model_name'))
+# _service = Blip2(config)
+model_name = json_object.pop('caption_model_name')
+config = None
+_service = None
 
 def handle(inputs: Input) -> Optional[Output]:
-
+    global config, _service
+    if not _service:
+        config = Config()
+        config.caption_model_name=model_name
+        _service = Blip2(config, inputs.get_properties())
+    
     if inputs.is_empty():
         return None
     data = inputs.get_as_json()
@@ -114,7 +128,7 @@ def handle(inputs: Input) -> Optional[Output]:
         params = data["parameters"]
         if "max_length" in params.keys():
             config.caption_max_length = params.pop("max_length")
-        
+            
     generated_text = _service.generate_caption(input_image, prompt)
 
     return Output().add(generated_text)
