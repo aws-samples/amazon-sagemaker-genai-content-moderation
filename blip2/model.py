@@ -31,8 +31,6 @@ class Config:
     caption_model = None
     caption_processor = None
 
-    # blip settings
-    caption_max_length: int = 200
     caption_model_name: Optional[str] = 'blip2-2.7b' # use a key from CAPTION_MODELS or None
     caption_offload: bool = False
     
@@ -76,7 +74,7 @@ class Blip2():
             self.caption_model = self.config.caption_model
             self.caption_processor = self.config.caption_processor
 
-    def generate_caption(self, pil_image: Image, prompt: Optional[str]=None) -> str:
+    def generate_caption(self, pil_image: Image, prompt: Optional[str]=None, params: Optional[dict]={}) -> str:
         assert self.caption_model is not None, "No caption model loaded."
         self._prepare_caption()
         inputs = self.caption_processor(images=pil_image, text=prompt, return_tensors="pt").to(self.device)
@@ -84,7 +82,7 @@ class Blip2():
             inputs = inputs.to(self.dtype)
 
         with torch.no_grad():
-            tokens = self.caption_model.generate(**inputs, max_new_tokens=self.config.caption_max_length)
+            tokens = self.caption_model.generate(**inputs, **params)
         
         return self.caption_processor.batch_decode(tokens, skip_special_tokens=True)[0].strip()
 
@@ -97,8 +95,6 @@ class Blip2():
 with open('./model_name.json', 'rb') as openfile:
     json_object = json.load(openfile)
 
-# config = Config(caption_model_name=json_object.pop('caption_model_name'))
-# _service = Blip2(config)
 model_name = json_object.pop('caption_model_name')
 config = None
 _service = None
@@ -123,12 +119,8 @@ def handle(inputs: Input) -> Optional[Output]:
         prompt = data.pop("prompt")
     else:
         prompt = None
-        
-    if 'parameters' in data:
-        params = data["parameters"]
-        if "max_length" in params.keys():
-            config.caption_max_length = params.pop("max_length")
-            
-    generated_text = _service.generate_caption(input_image, prompt)
+    
+    params = data["parameters"] if 'parameters' in data else {}
+    generated_text = _service.generate_caption(input_image, prompt, params)
 
     return Output().add(generated_text)
