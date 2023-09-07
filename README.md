@@ -1,6 +1,6 @@
 # Build a generative AI based content moderation solution on Amazon SageMaker
 
-We use [BLIP2](https://arxiv.org/abs/2301.12597) as the multimodal pre-training method. BLIP2 is one of the SOTA models in multimodal pre-training method, and outperforms most of the existing methods in Visual Question Answering, Image Captioning and Image-Text Retrieval. For LLM, we will use [Llama 2](https://ai.meta.com/llama/), the next generation open source large language model, which outperforms the existing open source language models on many benchmarks including reasoning, coding, proficiency, and knowledge tests.
+We use [BLIP2](https://arxiv.org/abs/2301.12597) as the multimodal pre-training method. BLIP2 is one of the SOTA models in multimodal pre-training method, and outperforms most of the existing methods in Visual Question Answering, Image Captioning and Image-Text Retrieval. For LLM, we will use [Llama 2](https://ai.meta.com/llama/).
 
 The overall solution illustration and architecture is demonstrated below
 
